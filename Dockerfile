@@ -13,7 +13,7 @@ COPY . .
 RUN pip install --upgrade pip wheel setuptools
 
 # Install scientific packages first to ensure wheels are used
-RUN pip install --prefer-binary numpy==2.0.2 scipy==1.13.1 scikit-learn==1.6.1
+RUN pip install --prefer-binary numpy==2.0.2 scipy==1.13.1 scikit-learn==1.8.0
 
 # Copy requirements.txt and remove numpy, scipy, scikit-learn lines for the next step
 RUN grep -v -i -E "^(numpy|scipy|scikit-learn)" requirements.txt > requirements-nonsci.txt
@@ -24,5 +24,6 @@ RUN pip install --prefer-binary -r requirements-nonsci.txt
 # Expose port (Flask default)
 EXPOSE 5000
 
-# Run the Flask app
-CMD ["python", "app.py"]
+# Run the app with gunicorn and bind to $PORT (default 5000)
+ENV PORT=5000
+ENTRYPOINT ["sh", "-c", "gunicorn app:app -b 0.0.0.0:${PORT} --workers ${WEB_CONCURRENCY:-1}"]

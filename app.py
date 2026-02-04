@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 import numpy
 from datetime import datetime
 from classifier import load_model
+import os
 
 app = Flask(__name__)
 
@@ -88,4 +89,7 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    host = os.environ.get("HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "False").lower() in ("1", "true", "yes")
+    app.run(host=host, port=port, debug=debug)
