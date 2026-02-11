@@ -1,9 +1,16 @@
 import pickle
 import warnings
 import os
+import yaml
+
+# Load configuration from config.yml
+with open("config.yml", "r") as config_file:
+    config = yaml.safe_load(config_file)
+
+model_name = config.get("model_name", "model.pkl")
 
 def load_model():
-    model_path = os.environ.get("MODEL_PATH", "model.pkl")
+    model_path = os.environ.get("MODEL_PATH", model_name)
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
     try:
